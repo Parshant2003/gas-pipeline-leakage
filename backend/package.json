@@ -1,0 +1,15 @@
+{
+  "name": "gas-leak-detection-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple Express server that runs a YOLOv8n ONNX model with onnxruntime-node",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^2.0.2",
+    "onnxruntime-node": "^1.22.0",
+    "sharp": "^0.34.3"
+  }
+}

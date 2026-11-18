@@ -1,0 +1,236 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gas Pipeline Leakage Detection</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Gas Pipeline Leakage Detection</h1>
+    <p>Upload a pipeline photo. A YOLOv8n model (running in Node.js with ONNX Runtime) looks for gas leaks.</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>1. Choose an image</h2>
+      <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp, image/bmp">
+      <button id="detectBtn" disabled>Detect gas</button>
+      <p id="message" class="message"></p>
+    </section>
+
+    <section class="card" id="resultCard" hidden>
+      <h2>2. Result</h2>
+      <p>Status: <span id="status" class="badge"></span></p>
+      <ul id="detectionList"></ul>
+      <p class="small" id="timing"></p>
+    </section>
+
+    <section class="card">
+      <h2>3. Original and processed image</h2>
+      <div class="side-by-side">
+        <figure>
+          <figcaption>Original</figcaption>
+          <img id="original" alt="Original image will appear here">
+        </figure>
+        <figure>
+          <figcaption>Processed (gas regions in red)</figcaption>
+          <canvas id="processed"></canvas>
+        </figure>
+      </div>
+    </section>
+
+     <section class="card" id="metricsCard" hidden>
+      <h2>Model evaluation (test split)</h2>
+      <div id="metrics"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html> -->
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gas Pipeline Leakage Detection</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M3 13h4l2-6 3 10 2-4h7"></path>
+            </svg>
+          </div>
+
+          <div class="brand-text">
+            <h1>Gas Pipeline Leakage Detection</h1>
+            <p>
+              Upload a pipeline photo. A YOLOv8n model running in Node.js with ONNX Runtime
+              identifies potential gas-leak regions.
+            </p>
+          </div>
+        </div>
+
+        <div class="hero-tags">
+          <span class="tag">
+            <span class="live-dot"></span>
+            YOLOv8n
+          </span>
+
+          <span class="tag tag-soft">ONNX Runtime</span>
+          <span class="tag tag-soft">Node.js</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- Upload -->
+      <section class="card upload-card">
+        <div class="card-header">
+          <div>
+            <h2>Upload image</h2>
+            <p>Select a clear pipeline photo to begin detection.</p>
+          </div>
+
+          <span class="step-chip">Step 01</span>
+        </div>
+
+        <label class="upload-zone" for="fileInput">
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/png, image/jpeg, image/webp, image/bmp"
+          >
+
+          <div class="upload-content">
+            <div class="upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 16V4"></path>
+                <path d="m7 9 5-5 5 5"></path>
+                <path d="M4 17v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"></path>
+              </svg>
+            </div>
+
+            <strong>Click to upload an image</strong>
+            <span>PNG, JPG, WEBP or BMP</span>
+          </div>
+        </label>
+
+        <div class="upload-footer">
+          <button id="detectBtn" class="primary-btn" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+            Detect gas
+          </button>
+
+          <p id="message" class="message"></p>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="card result-card" id="resultCard" hidden>
+        <div class="card-header">
+          <div>
+            <h2>Detection result</h2>
+            <p>Model output and detected gas regions.</p>
+          </div>
+
+          <span class="step-chip">Step 02</span>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-box">
+            <span class="box-label">Status</span>
+            <span id="status" class="badge"></span>
+          </div>
+
+          <div class="result-box">
+            <span class="box-label">Processing</span>
+            <p id="timing" class="timing"></p>
+          </div>
+        </div>
+
+        <div class="detections">
+          <h3>Detected regions</h3>
+          <ul id="detectionList"></ul>
+        </div>
+      </section>
+
+      <!-- Images -->
+      <section class="card image-card">
+        <div class="card-header">
+          <div>
+            <h2>Original vs processed</h2>
+            <p>Detected gas regions are highlighted in red.</p>
+          </div>
+
+          <span class="step-chip">Step 03</span>
+        </div>
+
+        <div class="side-by-side">
+          <figure>
+            <figcaption>
+              <span>Original image</span>
+            </figcaption>
+
+            <div class="image-frame">
+              <img id="original" alt="Original pipeline image">
+              <div class="image-placeholder">No image selected</div>
+            </div>
+          </figure>
+
+          <figure>
+            <figcaption>
+              <span>Processed output</span>
+              <span class="danger-chip">Gas regions highlighted</span>
+            </figcaption>
+
+            <div class="image-frame">
+              <canvas id="processed"></canvas>
+              <div class="image-placeholder">Detection result will appear here</div>
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <!-- Metrics -->
+      <section class="card metrics-card" id="metricsCard" hidden>
+        <div class="card-header">
+          <div>
+            <h2>Model evaluation</h2>
+            <p>Performance metrics on the held-out test split.</p>
+          </div>
+
+          <span class="step-chip">Evaluation</span>
+        </div>
+
+        <div id="metrics" class="metrics-table-wrap"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Gas Pipeline Leakage Detection · YOLOv8n · ONNX Runtime · Node.js</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

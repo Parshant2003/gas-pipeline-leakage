@@ -1,0 +1,15 @@
+# Gas leak detection - source-grouped split (no source-image leakage)
+path: .            # folder that contains this file
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 1
+names: ['Gas']
+
+roboflow:
+  workspace: video-analytics-nyp1g
+  project: gas-q9ewl
+  version: 3
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/video-analytics-nyp1g/gas-q9ewl/dataset/3
